@@ -1,112 +1,175 @@
 <?php
 session_start();
+
+// Jika sudah login, redirect ke dashboard.php
+if (isset($_SESSION['username'])) {
+    header("Location: dashboard.php");
+    exit();
+}
+
+$error = "";
+$username_input = "";
+
+// Proses login
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['batal'])) {
+        // Tombol Batal ditekan
+        $username_input = "";
+        $error = "";
+    } else {
+        $username_input = $_POST['username'] ?? '';
+        $password_input = $_POST['password'] ?? '';
+
+        // Data statis
+        $valid_user = 'admin';
+        $valid_pass = '1234';
+
+        if ($username_input === $valid_user && $password_input === $valid_pass) {
+            $_SESSION['username'] = $username_input;
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $error = "Username atau password salah!";
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login POLGAN MART</title>
     <style>
+        /* Gaya sesuai contoh gambar */
+        @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             margin: 0;
         }
-        .login-container {
+        .login-box {
             background: white;
-            padding: 30px 35px;
+            padding: 30px 40px;
             border-radius: 10px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-            width: 300px;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+            width: 320px;
             box-sizing: border-box;
-            text-align: center;
         }
         .login-title {
             font-weight: bold;
-            font-size: 20px;
+            font-size: 22px;
             color: #2a68ff;
-            margin-bottom: 25px;
+            text-align: center;
+            margin-bottom: 20px;
             user-select: none;
         }
-        label {
+        .input-label {
+            font-size: 12px;
+            color: #555;
+            margin: 10px 0 5px;
             display: block;
-            text-align: left;
-            font-size: 13px;
-            margin-bottom: 6px;
-            color: #222;
             user-select: none;
         }
-        input[type="text"],
+        input[type="text"], 
         input[type="password"] {
             width: 100%;
-            padding: 8px 10px;
-            margin-bottom: 16px;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 14px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
             background-color: #f0f4ff;
             box-sizing: border-box;
-            transition: border-color 0.3s ease;
         }
-        input[type="text"]:focus,
+        input[type="text"]:focus, 
         input[type="password"]:focus {
+            outline: none;
             border-color: #2a68ff;
             background-color: #e6efff;
-            outline: none;
-        }
-        button {
-            width: 100%;
-            padding: 10px 0;
-            font-size: 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 8px;
-            font-weight: 600;
-            user-select: none;
-            transition: background-color 0.25s ease;
         }
         .btn-login {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px 0;
             background-color: #2a68ff;
+            border: none;
+            border-radius: 6px;
             color: white;
-            box-shadow: 0 1px 3px rgba(0, 38, 255, 0.45);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgb(0 38 255 / 45%);
+            transition: background-color 0.3s ease;
+            user-select: none;
         }
         .btn-login:hover {
-            background-color: #1c4ad9;
+            background-color: #1e49d2;
         }
-        .btn-cancel {
+        .btn-batal {
+            margin-top: 8px;
+            width: 100%;
+            padding: 8px 0;
             background-color: #eee;
+            border: none;
+            border-radius: 6px;
             color: #555;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
             box-shadow: none;
-            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            user-select: none;
         }
-        .btn-cancel:hover {
+        .btn-batal:hover {
             background-color: #ddd;
         }
+        .error-message {
+            background-color: #ffdddd;
+            color: #cc0000;
+            font-size: 13px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+            user-select: none;
+        }
         .footer {
-            margin-top: 18px;
             font-size: 11px;
             color: #999;
+            text-align: center;
+            margin-top: 18px;
             user-select: none;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="login-box">
         <div class="login-title">POLGAN MART</div>
-        <form method="POST" action="process_login.php">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="admin" required autocomplete="off" />
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="•••" required autocomplete="off" />
+
+        <?php if ($error): ?>
+            <div class="error-message"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+
+        <form method="POST" action="">
+            <label class="input-label" for="username">Username</label>
+            <input 
+                type="text" 
+                name="username" 
+                id="username" 
+                required 
+                autocomplete="off" 
+                value="<?= htmlspecialchars($username_input) ?>" 
+            />
+            <label class="input-label" for="password">Password</label>
+            <input type="password" name="password" id="password" required autocomplete="off" />
+
             <button type="submit" class="btn-login">Login</button>
-            <button type="reset" class="btn-cancel">Batal</button>
+            <button type="submit" name="batal" class="btn-batal">Batal</button>
         </form>
         <div class="footer">© 2025 POLGAN MART</div>
     </div>
