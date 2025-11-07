@@ -67,10 +67,20 @@ if (!isset($_SESSION['username'])) {
         td {
             color: #333;
         }
-        .grandtotal {
-            margin-top: 25px;
-            font-size: 22px;
-            font-weight: 700;
+        .summary {
+            width: 75%;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: left;
+        }
+        .summary p {
+            font-size: 18px;
+            margin: 6px 0;
+        }
+        .summary strong {
             color: #2a68ff;
         }
         .footer {
@@ -94,7 +104,7 @@ if (!isset($_SESSION['username'])) {
     $nama_barang = ["Pensil", "Pulpen", "Buku Tulis", "Penghapus", "Penggaris"];
     $harga_barang = [2000, 3000, 5000, 1500, 2500];
 
-    // === Commit 6 + 7 + 8 ===
+    // === Commit 6–9: Logika Penjualan, Total, dan Diskon ===
     $beli = [];
     $jumlah = [];
     $total = [];
@@ -139,8 +149,24 @@ if (!isset($_SESSION['username'])) {
         </tr>
     </table>
 
-    <div class="grandtotal">
-        Total Belanja Anda: Rp <?= number_format($grandtotal, 0, ',', '.'); ?>
+    <?php
+    // === Hitung Diskon Berdasarkan Total Belanja ===
+    if ($grandtotal < 50000) {
+        $diskon_persen = 5;
+    } elseif ($grandtotal >= 50000 && $grandtotal <= 100000) {
+        $diskon_persen = 10;
+    } else {
+        $diskon_persen = 15;
+    }
+
+    $diskon = ($grandtotal * $diskon_persen) / 100;
+    $total_bayar = $grandtotal - $diskon;
+    ?>
+
+    <div class="summary">
+        <p><strong>Total Belanja:</strong> Rp <?= number_format($grandtotal, 0, ',', '.'); ?></p>
+        <p><strong>Diskon (<?= $diskon_persen; ?>%):</strong> Rp <?= number_format($diskon, 0, ',', '.'); ?></p>
+        <p><strong>Total Bayar Setelah Diskon:</strong> Rp <?= number_format($total_bayar, 0, ',', '.'); ?></p>
     </div>
 
     <form action="logout.php" method="POST">
@@ -153,4 +179,3 @@ if (!isset($_SESSION['username'])) {
 
 </body>
 </html>
-
