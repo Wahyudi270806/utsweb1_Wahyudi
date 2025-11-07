@@ -48,7 +48,7 @@ if (!isset($_SESSION['username'])) {
         }
         table {
             border-collapse: collapse;
-            width: 60%;
+            width: 70%;
             margin: 30px auto;
             background: white;
             border-radius: 10px;
@@ -78,23 +78,36 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <?php
-    // Data barang (5 produk)
+    // === Array Barang ===
     $kode_barang = ["BRG001", "BRG002", "BRG003", "BRG004", "BRG005"];
     $nama_barang = ["Pensil", "Pulpen", "Buku Tulis", "Penghapus", "Penggaris"];
     $harga_barang = [2000, 3000, 5000, 1500, 2500];
+
+    // === Commit 6: Logika Penjualan Random ===
+    $beli = [];       // Menyimpan barang yang dibeli
+    $jumlah = [];     // Menyimpan jumlah tiap barang
+    $total = [];      // (Akan digunakan di commit 7)
+    $grandtotal = 0;  // (Akan digunakan di commit 7)
+
+    // Random 3 transaksi pembelian
+    for ($i = 0; $i < 3; $i++) {
+        $index = rand(0, count($kode_barang) - 1); // pilih barang acak
+        $beli[] = $nama_barang[$index];
+        $jumlah[] = rand(1, 5); // jumlah pembelian antara 1–5
+    }
     ?>
 
     <table>
         <tr>
-            <th>Kode Barang</th>
+            <th>No</th>
             <th>Nama Barang</th>
-            <th>Harga (Rp)</th>
+            <th>Jumlah Beli</th>
         </tr>
-        <?php for ($i = 0; $i < count($kode_barang); $i++): ?>
+        <?php for ($i = 0; $i < count($beli); $i++): ?>
             <tr>
-                <td><?= $kode_barang[$i]; ?></td>
-                <td><?= $nama_barang[$i]; ?></td>
-                <td><?= number_format($harga_barang[$i], 0, ',', '.'); ?></td>
+                <td><?= $i + 1; ?></td>
+                <td><?= $beli[$i]; ?></td>
+                <td><?= $jumlah[$i]; ?></td>
             </tr>
         <?php endfor; ?>
     </table>
