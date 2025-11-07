@@ -48,7 +48,7 @@ if (!isset($_SESSION['username'])) {
         }
         table {
             border-collapse: collapse;
-            width: 70%;
+            width: 75%;
             margin: 30px auto;
             background: white;
             border-radius: 10px;
@@ -67,6 +67,12 @@ if (!isset($_SESSION['username'])) {
         td {
             color: #333;
         }
+        .grandtotal {
+            margin-top: 25px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #2a68ff;
+        }
     </style>
 </head>
 <body>
@@ -78,39 +84,55 @@ if (!isset($_SESSION['username'])) {
     </div>
 
     <?php
-    // === Array Barang ===
+    // === Data Barang ===
     $kode_barang = ["BRG001", "BRG002", "BRG003", "BRG004", "BRG005"];
     $nama_barang = ["Pensil", "Pulpen", "Buku Tulis", "Penghapus", "Penggaris"];
     $harga_barang = [2000, 3000, 5000, 1500, 2500];
 
-    // === Commit 6: Logika Penjualan Random ===
-    $beli = [];       // Menyimpan barang yang dibeli
-    $jumlah = [];     // Menyimpan jumlah tiap barang
-    $total = [];      // (Akan digunakan di commit 7)
-    $grandtotal = 0;  // (Akan digunakan di commit 7)
+    // === Commit 6 + 7: Penjualan Random + Hitung Total ===
+    $beli = [];
+    $jumlah = [];
+    $total = [];
+    $grandtotal = 0;
 
     // Random 3 transaksi pembelian
     for ($i = 0; $i < 3; $i++) {
-        $index = rand(0, count($kode_barang) - 1); // pilih barang acak
-        $beli[] = $nama_barang[$index];
-        $jumlah[] = rand(1, 5); // jumlah pembelian antara 1–5
+        $index = rand(0, count($kode_barang) - 1);
+        $beli[] = $index;
+        $jumlah[] = rand(1, 5);
     }
     ?>
 
     <table>
         <tr>
             <th>No</th>
+            <th>Kode Barang</th>
             <th>Nama Barang</th>
+            <th>Harga Satuan (Rp)</th>
             <th>Jumlah Beli</th>
+            <th>Total Harga (Rp)</th>
         </tr>
-        <?php for ($i = 0; $i < count($beli); $i++): ?>
+        <?php
+        $no = 1;
+        foreach ($beli as $key => $index) {
+            $subtotal = $harga_barang[$index] * $jumlah[$key];
+            $total[] = $subtotal;
+            $grandtotal += $subtotal;
+            ?>
             <tr>
-                <td><?= $i + 1; ?></td>
-                <td><?= $beli[$i]; ?></td>
-                <td><?= $jumlah[$i]; ?></td>
+                <td><?= $no++; ?></td>
+                <td><?= $kode_barang[$index]; ?></td>
+                <td><?= $nama_barang[$index]; ?></td>
+                <td><?= number_format($harga_barang[$index], 0, ',', '.'); ?></td>
+                <td><?= $jumlah[$key]; ?></td>
+                <td><?= number_format($subtotal, 0, ',', '.'); ?></td>
             </tr>
-        <?php endfor; ?>
+        <?php } ?>
     </table>
+
+    <div class="grandtotal">
+        Grand Total: Rp <?= number_format($grandtotal, 0, ',', '.'); ?>
+    </div>
 
     <form action="logout.php" method="POST">
         <button type="submit">Logout</button>
