@@ -69,9 +69,14 @@ if (!isset($_SESSION['username'])) {
         }
         .grandtotal {
             margin-top: 25px;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
             color: #2a68ff;
+        }
+        .footer {
+            margin-top: 40px;
+            color: #555;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -89,7 +94,7 @@ if (!isset($_SESSION['username'])) {
     $nama_barang = ["Pensil", "Pulpen", "Buku Tulis", "Penghapus", "Penggaris"];
     $harga_barang = [2000, 3000, 5000, 1500, 2500];
 
-    // === Commit 6 + 7: Penjualan Random + Hitung Total ===
+    // === Commit 6 + 7 + 8 ===
     $beli = [];
     $jumlah = [];
     $total = [];
@@ -128,15 +133,24 @@ if (!isset($_SESSION['username'])) {
                 <td><?= number_format($subtotal, 0, ',', '.'); ?></td>
             </tr>
         <?php } ?>
+        <tr>
+            <th colspan="5" style="text-align:right;">TOTAL BELANJA</th>
+            <th>Rp <?= number_format($grandtotal, 0, ',', '.'); ?></th>
+        </tr>
     </table>
 
     <div class="grandtotal">
-        Grand Total: Rp <?= number_format($grandtotal, 0, ',', '.'); ?>
+        Total Belanja Anda: Rp <?= number_format($grandtotal, 0, ',', '.'); ?>
     </div>
 
     <form action="logout.php" method="POST">
         <button type="submit">Logout</button>
     </form>
 
+    <div class="footer">
+        &copy; <?= date("Y"); ?> POLGAN MART. All Rights Reserved.
+    </div>
+
 </body>
 </html>
+
